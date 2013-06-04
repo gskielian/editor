@@ -19,6 +19,7 @@
 */
 
 ;(function($){
+
 	var EDITABLE = {
 		options: {},
 
@@ -95,8 +96,28 @@
 			this.css_editor  = this.editor.find('[data-editable-csseditor]');
 			this.js_editor   = this.editor.find('[data-editable-jseditor]');
 
-			// Click events for save/close buttons
 			me = this;
+
+			this.editor.find('textarea')
+				.css('font-family', 'monospace')
+				.on('keyup', function(e){
+					me.saveEditor();
+				})
+				.on('keydown', function(e){
+					// Prevent shifting focus when Tab is pressed
+					if (e.which === 9) {
+						var start = this.selectionStart;
+						var end   = this.selectionEnd;
+						var value = $(this).val();
+
+						$(this).val(value.substr(0, start) + "\t" + value.substr(end));
+						this.selectionStart = this.selectionEnd = start + 1;
+
+						return false;
+					}
+				});
+
+			// Click events for save/close buttons
 			save_button.on('click', function(){
 				me.saveEditor();
 			});
@@ -124,7 +145,6 @@
 				if (me.editor.css('display') === 'none') {
 					me.updateEditor();
 					me.editor.show();
-					console.log(me);
 				}
 				else {
 					me.editor.hide();
@@ -139,6 +159,8 @@
 		updateEditor: function() {
 			this.html_editor.val(this.target_html.innerHTML);
 			this.css_editor.val($(this.target_css).text());
+
+			this.editor.find('textarea').stripIndentation();
 		},
 
 		/*
@@ -167,52 +189,31 @@
 		});
 	}
 
+	$.fn.stripIndentation = function() {
+		return this.each(function(){
+			var text = $(this).val();
+
+			// Kill initial carriage returns
+			while (text.charAt(0) === '\n')
+				text = text.substr(1);
+
+			// Scan the start of the string for whitespace
+			var regexp = /^([\s]+)/;
+			var match = regexp.exec(text);
+
+			console.log(match);
+
+			text = text.replace(match[0], '');
+
+			$(this).val(text);
+		});
+	}
+
 	$.fn.editable = function() {
 		this.find('[data-editable]').each(function(){
 			var editable = $.extend({}, EDITABLE);
 			editable.init(this, {});
 		})
 		return this;
-	}
-
-	$.fn.editableold = function() {
-		this.find('[data-editable]').each(function(){
-			$(this).click(function(){
-				// Find the HTML element
-				var target = $('#'+this.getAttribute('data-editable'));
-				if (target.length === 0) {
-					console.log('No element with an ID of '+this.getAttribute('data-editable')+' was found.');
-					return;
-				}
-
-				// Container
-				var editor = $('<div />', {class: 'editable-modal'})
-					.appendTo('body');
-				// Box for HTML
-				var html_editor = $(document.createElement('textarea'))
-					.appendTo(editor)
-					.val(target.children('div')[0].innerHTML);
-				// Box for CSS
-				var css_editor = $(document.createElement('textarea'))
-					.appendTo(editor)
-					.val(target.find('style').text());
-				// Box for JS
-				// ------
-
-				// Save/cancel buttons
-				$('<a />', { text: 'Save', href: '#', })
-					.click(function(){
-						target.children('div')[0].innerHTML = html_editor[0].value;
-						target.children('style').text(css_editor[0].value);
-						$(this).parent().remove();
-					})
-					.appendTo(editor);
-				$('<a />', { text: 'Cancel', href: '#', })
-					.click(function(){
-						$(this).parent().remove();
-					})
-					.appendTo(editor);
-			});
-		});
 	}
 })(this.Zepto || this.jQuery);
