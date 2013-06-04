@@ -1,0 +1,108 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>editor.js</title>
+	<style>
+		body {
+			max-width: 900px;
+			margin: 0 auto;
+			font-family: sans-serif;
+			padding-bottom: 3em;
+		}
+
+		iframe {
+			display: block;
+			margin: 1em auto;
+			border-radius: 7px;
+			box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+		}
+
+		[data-editable-trigger] {
+			display: block;
+			max-width: 150px;
+			text-align: center;
+			margin: 2rem auto;
+			font-size: 1.5em;
+			background: #ccc;
+			border-radius: 10px;
+			color: #000;
+			text-decoration: none;
+			padding: 0.2em 1em;
+		}
+
+		.editor {
+			background: #333;
+			border: 3px solid #666;
+			max-width: 600px;
+			margin: 0 auto;
+			
+			overflow: hidden;
+			clear: both;
+		}
+			.editor > div {
+				width: 50%;
+				float: left;
+			}
+			.editor h1 {
+				margin: 0;
+				font-size: 1.2em;
+				color: #fff;
+			}
+			.editor textarea {
+				width: 100%;
+				height: 300px;
+				background: #666;
+				color: #fff;
+			}
+			.editor > a {
+				display: inline-block;
+				margin-left: 1em;
+				background: #ccc;
+				color: #333;
+				padding: 0.2em;
+			}
+	</style>
+</head>
+<body>
+
+	<!-- Start sample editable group -->
+
+	<div data-editable="editable">
+		<div id="edit-sample">
+			<h1>Hello, world.</h1>
+			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorum, saepe, nemo veritatis suscipit explicabo quisquam beatae voluptatum magni perspiciatis asperiores fugit debitis nisi dolore eos ducimus vel voluptatem quod iste!</p>
+		</div>
+
+		<style type="text/css">
+			#edit-sample {
+				font-family: sans-serif;
+			}
+		</style>
+	</div>
+
+	<a href="#" data-editable-trigger="editable">Edit</a>
+
+	<div data-editable-editor="editable" class="editor">
+		<div>
+			<h1>HTML</h1>
+			<textarea data-editable-htmleditor></textarea>
+		</div>
+		<div>
+			<h1>CSS</h1>
+			<textarea data-editable-csseditor></textarea>
+		</div>
+		<a data-editable-saveeditor>Save</a>
+		<a data-editable-closeeditor>Close</a>
+	</div>
+
+	<!-- End sample -->
+
+	<script type="text/javascript" src="zepto.js"></script>
+	<script type="text/javascript" src="editor.js"></script>
+	<script>
+		$(function(){
+			$(document).editable();
+		})
+	</script>
+</body>
+</html>
