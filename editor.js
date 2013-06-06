@@ -70,10 +70,14 @@
 			// Copy the contents of the target container into the iFrame
 			iframe_body[0].innerHTML = target[0].innerHTML;
 
-			// Select the HTML, CSS, and JavaScript of the new iFrame for later use
-			this.target_html = iframe_body.children('div')[0];
-			this.target_css  = iframe_body.children('style')[0];
-			this.target_js   = iframe_body.children('script')[0];
+			me = this;
+			$.each([['html', 'div'], ['css', 'style'], ['js', 'script']], function(index, item) {
+				var elem = iframe_body.children(item[1])[0];
+				if (typeof elem === 'undefined') {
+					elem = $('<'+item[0]+' />').appendTo(iframe_body);
+				}
+				eval('me.target_'+item[0]+' = elem');
+			});
 
 			// Remove the target
 			target.remove();
@@ -201,9 +205,10 @@
 			var regexp = /^([\s]+)/;
 			var match = regexp.exec(text);
 
-			console.log(match);
+			// text = text.replace(match[0], '');
 
-			text = text.replace(match[0], '');
+			// Replace tabs with two spaces
+			text = text.replace("\t","  ");
 
 			$(this).val(text);
 		});
